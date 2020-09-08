@@ -1,4 +1,6 @@
 # OpenShift-PoC
+Also using this repo for recording important commands and notes related to each chapter of DO288 course.
+
 Playground setup for OpenShift PoC
 
 
