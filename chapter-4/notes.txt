@@ -1,0 +1,16 @@
+Build Strategies
+The following are the available build strategies in OpenShift:
+• Source
+• Pipeline
+• Docker
+• Custom
+
+Build Input Sources
+A build input source provides source content for builds. OpenShift supports the following six types of input sources, listed in order of precedence:
+• Dockerfile: Specifies the Dockerfile inline to build an image.
+• Image: You can provide additional files to the build process when you build from images.
+• Git: OpenShift clones the input application source code from a Git repository. It is possible to configure the default location inside the repository where the build looks for application source code.
+• Binary: Allows streaming binary content from a local file system to the builder.
+• Input secrets: You can use input secrets to allow creating credentials for the build that are not available in the final application image.
+• External artifacts: Allow copying binary files to the build process.
+

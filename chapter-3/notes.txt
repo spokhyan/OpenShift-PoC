@@ -1,0 +1,49 @@
+
+
+*************Lab***************
+oc login -u ${RHT_OCP4_DEV_USER} -p ${RHT_OCP4_DEV_PASSWORD} ${RHT_OCP4_MASTER_API}
+
+ls DO288/labs/expose-image/php-info
+
+podman login -u ${RHT_OCP4_QUAY_USER} quay.io
+
+skopeo copy oci:/home/student/DO288/labs/expose-image/php-info docker://quay.io/${RHT_OCP4_QUAY_USER}/php-info
+
+Verify that the image exists in the external registry using Podman
+
+ podman search quay.io/php-info
+ 
+Inspect the image in the external registry using Skopeo
+
+ skopeo inspect docker://quay.io/${RHT_OCP4_QUAY_USER}/php-info
+
+oc new-project ${RHT_OCP4_DEV_USER}-common
+
+oc create secret generic quayio --from-file  .dockerconfigjson=${XDG_RUNTIME_DIR}/containers/auth.json --type  kubernetes.io/dockerconfigjson
+
+oc secrets link default quayio --for pull
+
+oc import-image php-info --confirm --reference-policy local --from quay.io/${RHT_OCP4_QUAY_USER}/php-info
+
+oc new-project ${RHT_OCP4_DEV_USER}-expose-image
+
+oc policy add-role-to-group -n ${RHT_OCP4_DEV_USER}-common system:image-puller system:serviceaccounts:${RHT_OCP4_DEV_USER}-expose-image
+
+php-info
+oc new-app --name info -i ${RHT_OCP4_DEV_USER}-common/php-info
+
+oc get pod
+
+oc expose svc info
+
+oc get route
+
+curl http://info-${RHT_OCP4_DEV_USER}-expose-image.${RHT_OCP4_WILDCARD_DOMAIN}
+
+oc delete project ${RHT_OCP4_DEV_USER}-expose-image
+
+oc delete project ${RHT_OCP4_DEV_USER}-common
+
+skopeo delete docker://quay.io/${RHT_OCP4_QUAY_USER}/php-info:latest
+
+vi DO288/labs/expose-image/grant-puller-role.sh
